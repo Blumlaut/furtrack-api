@@ -89,7 +89,7 @@ class FurtrackAPI {
 		});
 
 		this.defaultHeaders = {
-			"User-Agent": "furtrack-api/1.0 (https://github.com/blumlaut/furtrack-api)",
+			"User-Agent": `furtrack-api/${require('../package.json').version} (https://github.com/blumlaut/furtrack-api)`,
 			"Accept": "application/json, text/plain, */*",
 			"Referer": "https://www.furtrack.com/",
 			"Origin": "https://www.furtrack.com",
@@ -154,7 +154,6 @@ class FurtrackAPI {
 		return this.fetchJSON(`/view/post/${encodeURIComponent(postId)}`);
 	}
 
-	// function to get posts from a tag with pagination support
 	async getPostsByTag(tag, page = 0) {
 		const response = await this.fetchJSON(`/get/tag/${encodeURIComponent(tag)}${page > 0 ? `/${page}` : ''}`);
 		return response.posts || [];
@@ -165,7 +164,6 @@ class FurtrackAPI {
 		return response.posts || [];
 	}
 
-	// function to get user's liked posts with pagination support
 	async getLikes(username, page = 0) {
 		const response = await this.fetchJSON(`/view/album/${encodeURIComponent(username)}/o${page > 0 ? `/${page}` : ''}`);
 		return response.posts || [];
@@ -173,6 +171,9 @@ class FurtrackAPI {
 	
 	async getThumbnail(postId) {
 		const postData = await this.getPost(postId);
+		if (!postData.submitUserId || !postData.id || !postData.metaFingerprint || !postData.metaFiletype) {
+			throw new Error('Missing required fields in postData for constructing thumbnail URL');
+		}
 		return `https://orca2.furtrack.com/gallery/${postData.submitUserId}/${postData.id}-${postData.metaFingerprint}.${postData.metaFiletype}`;
 	}
 
