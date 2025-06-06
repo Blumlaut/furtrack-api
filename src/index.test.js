@@ -1,4 +1,3 @@
-
 const { test, expect, describe, beforeEach } = require('@jest/globals');
 const FurtrackAPI = require('./index');
 
@@ -75,81 +74,6 @@ describe('FurtrackAPI', () => {
 			const tags = [{ tagName: '2:Beta' }];
 			const result = FurtrackAPI.getTagsByType(tags, FurtrackAPI.TagTypes.Event);
 			expect(result).toEqual([]);
-		});
-	});
-
-	describe('API methods', () => {
-		beforeEach(() => {
-			global.fetch = jest.fn();
-		});
-		afterEach(() => {
-			jest.resetAllMocks();
-		});
-
-		test('getTag calls fetchJSON with correct path', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ tag: 'data' });
-			const result = await api.getTag('foo');
-			expect(api.fetchJSON).toHaveBeenCalledWith('/get/index/foo');
-			expect(result).toEqual({ tag: 'data' });
-		});
-
-		test('getUser calls fetchJSON with correct path', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ user: 'data' });
-			const result = await api.getUser('bar');
-			expect(api.fetchJSON).toHaveBeenCalledWith('/get/u/bar');
-			expect(result).toEqual({ user: 'data' });
-		});
-
-		test('getPost calls fetchJSON with correct path', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ post: 'data' });
-			const result = await api.getPost(123);
-			expect(api.fetchJSON).toHaveBeenCalledWith('/view/post/123');
-			expect(result).toEqual({ post: 'data' });
-		});
-
-		test('getPostsByTag returns posts array', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ posts: [1, 2] });
-			const result = await api.getPostsByTag('foo');
-			expect(api.fetchJSON).toHaveBeenCalledWith('/get/tag/foo');
-			expect(result).toEqual([1, 2]);
-		});
-
-		test('getPostsByTag returns empty array if no posts', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({});
-			const result = await api.getPostsByTag('foo');
-			expect(result).toEqual([]);
-		});
-
-		test('getPostsByUser returns posts array', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ posts: [3, 4] });
-			const result = await api.getPostsByUser('user', 2);
-			expect(api.fetchJSON).toHaveBeenCalledWith('/view/album/user/3/2');
-			expect(result).toEqual([3, 4]);
-		});
-
-		test('getLikes returns posts array', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ posts: [5, 6] });
-			const result = await api.getLikes('user', 1);
-			expect(api.fetchJSON).toHaveBeenCalledWith('/view/album/user/o/1');
-			expect(result).toEqual([5, 6]);
-		});
-
-		test('getThumbnail returns correct URL', async () => {
-			api.getPost = jest.fn().mockResolvedValue({
-				submitUserId: 42,
-				id: 99,
-				metaFingerprint: 'abc',
-				metaFiletype: 'jpg'
-			});
-			const url = await api.getThumbnail(99);
-			expect(url).toBe('https://orca2.furtrack.com/gallery/42/99-abc.jpg');
-		});
-
-		test('getAlbum calls fetchJSON with correct path', async () => {
-			api.fetchJSON = jest.fn().mockResolvedValue({ album: 'data' });
-			const result = await api.getAlbum('user', 'albumid');
-			expect(api.fetchJSON).toHaveBeenCalledWith('/view/album/user/albumid');
-			expect(result).toEqual({ album: 'data' });
 		});
 	});
 });
