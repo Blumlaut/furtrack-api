@@ -12,7 +12,7 @@ describe('FurtrackAPI', () => {
 	test('constructor sets default values', () => {
 		expect(api.apiKey).toBeUndefined();
 		expect(api.baseUrl).toBe('https://solar.furtrack.com');
-		expect(api.defaultHeaders['User-Agent']).toMatch(/Mozilla/);
+		expect(api.defaultHeaders['User-Agent']).toMatch(/furtrack-api/);
 	});
 
 	test('constructor sets apiKey and Authorization header', () => {
