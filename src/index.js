@@ -89,7 +89,7 @@ class FurtrackAPI {
 		});
 
 		this.defaultHeaders = {
-			"User-Agent": `furtrack-api/${require('../package.json').version} (https://github.com/blumlaut/furtrack-api)`,
+			"User-Agent": `furtrack-api/${require('../package.json').version} (https://github.com/blumlaut/furtrack-api) Mozilla/5.0 (compatible; FurtrackAPI/${require('../package.json').version}`,
 			"Accept": "application/json, text/plain, */*",
 			"Referer": "https://www.furtrack.com/",
 			"Origin": "https://www.furtrack.com",
