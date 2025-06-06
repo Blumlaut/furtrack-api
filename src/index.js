@@ -176,8 +176,8 @@ class FurtrackAPI {
         return `https://orca2.furtrack.com/gallery/${postData.submitUserId}/${postData.id}-${postData.metaFingerprint}.${postData.metaFiletype}`;
     }
 
-    getAlbum(username, albumId) {
-        return this.fetchJSON(`/view/album/${encodeURIComponent(username)}/${encodeURIComponent(albumId)}`);
+    getAlbum(username, albumId, page = 0) {
+        return this.fetchJSON(`/view/album/${encodeURIComponent(username)}/${encodeURIComponent(albumId)}${page > 0 ? `/${page}` : ''}`);
     }
 
     parseTag(tagString) {
