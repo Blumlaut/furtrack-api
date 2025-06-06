@@ -77,129 +77,129 @@ const https = require('https');
  */
 
 class FurtrackAPI {
-    constructor({ apiKey = undefined, headers = {} } = {}) {
-        this.apiKey = apiKey;
-        this.baseUrl = 'https://solar.furtrack.com';
-        this.agent = new https.Agent({
-            rejectUnauthorized: false,
-            ciphers: 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384',
-            honorCipherOrder: true,
-            minVersion: 'TLSv1.2',
-            maxVersion: 'TLSv1.3'
-        });
+	constructor({ apiKey = undefined, headers = {} } = {}) {
+		this.apiKey = apiKey;
+		this.baseUrl = 'https://solar.furtrack.com';
+		this.agent = new https.Agent({
+			rejectUnauthorized: false,
+			ciphers: 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384',
+			honorCipherOrder: true,
+			minVersion: 'TLSv1.2',
+			maxVersion: 'TLSv1.3'
+		});
 
-        this.defaultHeaders = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
-            "Accept": "application/json, text/plain, */*",
-            "Referer": "https://www.furtrack.com/",
-            "Origin": "https://www.furtrack.com",
-            "Accept-Language": "en-US,en;q=0.5",
-            ...headers
-        };
+		this.defaultHeaders = {
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+			"Accept": "application/json, text/plain, */*",
+			"Referer": "https://www.furtrack.com/",
+			"Origin": "https://www.furtrack.com",
+			"Accept-Language": "en-US,en;q=0.5",
+			...headers
+		};
 
-        if (this.apiKey) {
-            this.defaultHeaders['Authorization'] = `Bearer ${this.apiKey}`;
-        }
-    }
+		if (this.apiKey) {
+			this.defaultHeaders['Authorization'] = `Bearer ${this.apiKey}`;
+		}
+	}
 
-    static TagTypes = {
-        Character: 'character',
-        Maker: 'maker',
-        Photographer: 'photographer',
-        Species: 'species',
-        Event: 'event',
-        General: 'general'
-    };
+	static TagTypes = {
+		Character: 'character',
+		Maker: 'maker',
+		Photographer: 'photographer',
+		Species: 'species',
+		Event: 'event',
+		General: 'general'
+	};
 
-    static tagTypePrefixes = {
-        '1:': this.TagTypes.Character,
-        '2:': this.TagTypes.Maker,
-        '3:': this.TagTypes.Photographer,
-        '5:': this.TagTypes.Event,
-        '6': this.TagTypes.Species,
+	static tagTypePrefixes = {
+		'1:': this.TagTypes.Character,
+		'2:': this.TagTypes.Maker,
+		'3:': this.TagTypes.Photographer,
+		'5:': this.TagTypes.Event,
+		'6': this.TagTypes.Species,
 
-    };
+	};
 
-    setApiKey(apiKey) {
-        this.apiKey = apiKey;
-        this.defaultHeaders['Authorization'] = `Bearer ${apiKey}`;
-    }
+	setApiKey(apiKey) {
+		this.apiKey = apiKey;
+		this.defaultHeaders['Authorization'] = `Bearer ${apiKey}`;
+	}
 
-    setHeaders(headers) {
-        this.defaultHeaders = { ...this.defaultHeaders, ...headers };
-    }
+	setHeaders(headers) {
+		this.defaultHeaders = { ...this.defaultHeaders, ...headers };
+	}
 
-    async fetchJSON(path, options = {}) {
-        const url = `${this.baseUrl}${path}`;
-        const fetchOptions = {
-            method: 'GET',
-            agent: this.agent,
-            headers: this.defaultHeaders,
-            ...options
-        };
-        const res = await fetch(url, fetchOptions);
-        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-        return res.json();
-    }
+	async fetchJSON(path, options = {}) {
+		const url = `${this.baseUrl}${path}`;
+		const fetchOptions = {
+			method: 'GET',
+			agent: this.agent,
+			headers: this.defaultHeaders,
+			...options
+		};
+		const res = await fetch(url, fetchOptions);
+		if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+		return res.json();
+	}
 
-    getTag(tag) {
-        return this.fetchJSON(`/get/index/${encodeURIComponent(tag)}`);
-    }
+	getTag(tag) {
+		return this.fetchJSON(`/get/index/${encodeURIComponent(tag)}`);
+	}
 
-    getUser(username) {
-        return this.fetchJSON(`/get/u/${encodeURIComponent(username)}`);
-    }
+	getUser(username) {
+		return this.fetchJSON(`/get/u/${encodeURIComponent(username)}`);
+	}
 
-    getPost(postId) {
-        return this.fetchJSON(`/view/post/${encodeURIComponent(postId)}`);
-    }
+	getPost(postId) {
+		return this.fetchJSON(`/view/post/${encodeURIComponent(postId)}`);
+	}
 
-    // function to get posts from a tag with pagination support
-    async getPostsByTag(tag, page = 0) {
-        const response = await this.fetchJSON(`/get/tag/${encodeURIComponent(tag)}${page > 0 ? `/${page}` : ''}`);
-        return response.posts || [];
-    }
+	// function to get posts from a tag with pagination support
+	async getPostsByTag(tag, page = 0) {
+		const response = await this.fetchJSON(`/get/tag/${encodeURIComponent(tag)}${page > 0 ? `/${page}` : ''}`);
+		return response.posts || [];
+	}
 
-    async getPostsByUser(username, page = 0) {
-        const response = await this.fetchJSON(`/view/album/${encodeURIComponent(username)}/3${page > 0 ? `/${page}` : ''}`);
-        return response.posts || [];
-    }
+	async getPostsByUser(username, page = 0) {
+		const response = await this.fetchJSON(`/view/album/${encodeURIComponent(username)}/3${page > 0 ? `/${page}` : ''}`);
+		return response.posts || [];
+	}
 
-    // function to get user's liked posts with pagination support
-    async getLikes(username, page = 0) {
-        const response = await this.fetchJSON(`/view/album/${encodeURIComponent(username)}/o${page > 0 ? `/${page}` : ''}`);
-        return response.posts || [];
-    }
-    
-    async getThumbnail(postId) {
-        const postData = await this.getPost(postId);
-        return `https://orca2.furtrack.com/gallery/${postData.submitUserId}/${postData.id}-${postData.metaFingerprint}.${postData.metaFiletype}`;
-    }
+	// function to get user's liked posts with pagination support
+	async getLikes(username, page = 0) {
+		const response = await this.fetchJSON(`/view/album/${encodeURIComponent(username)}/o${page > 0 ? `/${page}` : ''}`);
+		return response.posts || [];
+	}
+	
+	async getThumbnail(postId) {
+		const postData = await this.getPost(postId);
+		return `https://orca2.furtrack.com/gallery/${postData.submitUserId}/${postData.id}-${postData.metaFingerprint}.${postData.metaFiletype}`;
+	}
 
-    getAlbum(username, albumId, page = 0) {
-        return this.fetchJSON(`/view/album/${encodeURIComponent(username)}/${encodeURIComponent(albumId)}${page > 0 ? `/${page}` : ''}`);
-    }
+	getAlbum(username, albumId, page = 0) {
+		return this.fetchJSON(`/view/album/${encodeURIComponent(username)}/${encodeURIComponent(albumId)}${page > 0 ? `/${page}` : ''}`);
+	}
 
-    parseTag(tagString) {
-        return FurtrackAPI.parseTag(tagString);
-    }
+	parseTag(tagString) {
+		return FurtrackAPI.parseTag(tagString);
+	}
 
-    static parseTag(tagString) {
-        for (const [prefix, type] of Object.entries(this.tagTypePrefixes)) {
-            if (tagString.startsWith(prefix)) {
-                return { type, value: tagString.slice(prefix.length) };
-            }
-        }
-        return { type: this.TagTypes.General, value: tagString };
-    }
+	static parseTag(tagString) {
+		for (const [prefix, type] of Object.entries(this.tagTypePrefixes)) {
+			if (tagString.startsWith(prefix)) {
+				return { type, value: tagString.slice(prefix.length) };
+			}
+		}
+		return { type: this.TagTypes.General, value: tagString };
+	}
 
 
-    static getTagsByType(tags, type) {
-        return tags
-            .map(tag => this.parseTag(tag.tagName))
-            .filter(parsed => parsed.type === type)
-            .map(parsed => parsed.value);
-    }
+	static getTagsByType(tags, type) {
+		return tags
+			.map(tag => this.parseTag(tag.tagName))
+			.filter(parsed => parsed.type === type)
+			.map(parsed => parsed.value);
+	}
 
 }
 
