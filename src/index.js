@@ -89,7 +89,7 @@ class FurtrackAPI {
 		});
 
 		this.defaultHeaders = {
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+			"User-Agent": "furtrack-api/1.0 (https://github.com/blumlaut/furtrack-api)",
 			"Accept": "application/json, text/plain, */*",
 			"Referer": "https://www.furtrack.com/",
 			"Origin": "https://www.furtrack.com",
