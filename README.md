@@ -2,6 +2,8 @@
 
 An unofficial Node.js package for accessing the Furtrack API.
 
+> ⚠️ **Warning**: This package was built by **reverse engineering the FurTrack frontend**, and it is a **best-effort implementation**. FurTrack's internal API may change at any time, which can cause this package to break or behave unexpectedly.
+
 
 ## Features
 
