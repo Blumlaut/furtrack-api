@@ -162,7 +162,7 @@ class FurtrackAPI {
 	}
 
 	async getPostsByTag(tag, page = 0) {
-		const response = await this.fetchJSON(`/get/tag/${encodeURIComponent(tag)}${page > 0 ? `/${page}` : ''}`);
+		const response = await this.fetchJSON(`/view/index/${encodeURIComponent(tag)}${page > 0 ? `/${page}` : ''}`);
 		return response.posts || [];
 	}
 
