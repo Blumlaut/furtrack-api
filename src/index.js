@@ -29,6 +29,9 @@ const https = require('https');
  * @param {Object} [options] - Additional fetch options.
  * @returns {Promise<Object>} The parsed JSON response.
  * 
+ * @method getTags Fetches all tags from FurTrack.
+ * @returns {Promise<Object>} Tags data with success flag and tags array.
+ *
  * @method getTag Fetches information about a specific tag.
  * @param {string} tag - The tag to fetch.
  * @returns {Promise<Object>} Tag information.
@@ -140,6 +143,10 @@ class FurtrackAPI {
 		const res = await fetch(url, fetchOptions);
 		if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 		return res.json();
+	}
+
+	getTags() {
+		return this.fetchJSON(`/get/tags/all`);
 	}
 
 	getTag(tag) {

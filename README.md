@@ -77,6 +77,11 @@ api.getAlbum('username', 'albumid').then(album => {
 	console.log(album)
 })
 
+// Fetch all tags
+api.getTags().then(tags => {
+	console.log(tags);
+})
+
 ```
 
 Functions which return a list of arrays additional support a page argument, FurTrack generally paginates albums longer than 200 images, by default only the first page is retrieved.
