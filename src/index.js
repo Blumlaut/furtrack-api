@@ -119,7 +119,7 @@ class FurtrackAPI {
 		'2:': this.TagTypes.Maker,
 		'3:': this.TagTypes.Photographer,
 		'5:': this.TagTypes.Event,
-		'6': this.TagTypes.Species,
+		'6:': this.TagTypes.Species,
 
 	};
 

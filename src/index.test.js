@@ -50,7 +50,7 @@ describe('FurtrackAPI', () => {
 			expect(result).toEqual({ type: FurtrackAPI.TagTypes.Event, value: 'SomeEvent' });
 		});
 		test('parses species tag', () => {
-			const result = api.parseTag('6Wolf');
+			const result = api.parseTag('6:Wolf');
 			expect(result).toEqual({ type: FurtrackAPI.TagTypes.Species, value: 'Wolf' });
 		});
 		test('parses general tag', () => {
