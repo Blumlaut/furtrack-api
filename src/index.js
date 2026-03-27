@@ -202,11 +202,76 @@ class FurtrackAPI {
 	}
 
 
-	static getTagsByType(tags, type) {
+ static getTagsByType(tags, type) {
 		return tags
 			.map(tag => this.parseTag(tag.tagName))
 			.filter(parsed => parsed.type === type)
 			.map(parsed => parsed.value);
+	}
+
+	/**
+	 * Fetches all character tags associated with a maker tag.
+	 * Returns the full character metadata including tag counts and followers.
+	 * 
+	 * @param {string} makerTag - The maker tag (e.g., "wild_dog_works" or "maker:wild_dog_works").
+	 * @returns {Promise<Array>} Array of character tag objects with metadata.
+	 * 
+	 * @example
+	 * const characters = await api.getCharactersByMaker('wild_dog_works');
+	 * // Returns: [{ tagName: '1:colby_(husky)', tagType: 1, tagTitle: 'Colby', ... }, ...]
+	 */
+	async getCharactersByMaker(makerTag) {
+		// Normalize tag format
+		if (!makerTag.startsWith('2:')) {
+			makerTag = `2:${makerTag}`;
+		}
+		const tagData = await this.getTag(makerTag.replace('2:', 'maker:'));
+		return tagData.tagmeta?.tagChildrenFull || [];
+	}
+
+	/**
+	 * Fetches all related tags for a character, including makers, species, and color tags.
+	 * 
+	 * @param {string} characterTag - The character tag (e.g., "colby_(husky)" or "character:colby_(husky)").
+	 * @returns {Promise<Object>} Object with categorized related tags.
+	 * @returns {Promise<Object>.makers} Array of maker tag values.
+	 * @returns {Promise<Object>.species} Array of species tag values.
+	 * @returns {Promise<Object>.colors} Array of color/general tag values.
+	 * @returns {Promise<Object>.all} Array of all related tag names.
+	 * 
+	 * @example
+	 * const related = await api.getRelatedTagsByCharacter('colby_(husky)');
+	 * // Returns: { makers: ['wild_dog_works', 'pyrope_costumes'], species: ['husky'], colors: ['black', 'blue', ...], all: [...] }
+	 */
+	async getRelatedTagsByCharacter(characterTag) {
+		// Normalize tag format
+		if (!characterTag.startsWith('1:')) {
+			characterTag = `1:${characterTag}`;
+		}
+		const tagData = await this.getTag(characterTag.replace('1:', 'character:'));
+		const tagAlso = tagData.tagmeta?.tagAlso || [];
+		
+		return {
+			makers: FurtrackAPI.getTagsByType(tagAlso.map(t => ({ tagName: t })), FurtrackAPI.TagTypes.Maker),
+			species: FurtrackAPI.getTagsByType(tagAlso.map(t => ({ tagName: t })), FurtrackAPI.TagTypes.Species),
+			colors: tagAlso.filter(t => !t.startsWith('1:') && !t.startsWith('2:') && !t.startsWith('3:') && !t.startsWith('5:') && !t.startsWith('6:')),
+			all: tagAlso
+		};
+	}
+
+	/**
+	 * Fetches all makers associated with a character tag.
+	 * 
+	 * @param {string} characterTag - The character tag (e.g., "colby_(husky)" or "character:colby_(husky)").
+	 * @returns {Promise<Array>} Array of maker tag values.
+	 * 
+	 * @example
+	 * const makers = await api.getMakersByCharacter('colby_(husky)');
+	 * // Returns: ['wild_dog_works', 'pyrope_costumes']
+	 */
+	async getMakersByCharacter(characterTag) {
+		const related = await this.getRelatedTagsByCharacter(characterTag);
+		return related.makers;
 	}
 
 }
